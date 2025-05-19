@@ -25,14 +25,12 @@ horizon = st.sidebar.slider("Dias de previsão", 1, 60, 30)
 if uploaded:
     df = load_data(uploaded)
 
-    # Bloco de Seleção de Intervalo Histórico
-    start_date, end_date = st.sidebar.date_input(
-        "Intervalo da Série Histórica",
+    # Bloco de seleção de intervalo histórico
+    start_date, end_date = st.date_input(
+        "Selecione o intervalo histórico",
         [df.index.min().date(), df.index.max().date()]
     )
-    start = pd.to_datetime(start_date)
-    end = pd.to_datetime(end_date)
-    df_hist = df.loc[start:end]
+    df_hist = df.loc[start_date:end_date]
 
     # Bloco da Série Histórica
     st.subheader("Série Histórica")
@@ -92,6 +90,5 @@ if uploaded:
     df_table['Data'] = df_table['Data'].dt.strftime('%Y-%m-%d')
     st.subheader("Previsão em Tabela")
     st.table(df_table[['Data', 'Previsão', 'Margem de Erro (%)']])
-
 else:
     st.info("Faça upload do CSV para iniciar.")
