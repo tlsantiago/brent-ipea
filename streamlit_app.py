@@ -37,7 +37,7 @@ if uploaded:
     # Bloco de Insights
     st.markdown("""
 **Insights do histórico de variação do preço do petróleo Brent:**
-- **Pico de 2008:** em meados de 2008, o preço atingiu quase 140 USD/barrel antes da crise financeira, caindo para cerca de 40 USD no início de 2009.
+- **Pico de 2008:** em meados de 2008, o preço atingiu quase 140 USD/por barril antes da crise financeira, caindo para cerca de 40 USD no início de 2009.
 - **Queda de 2014–2016:** com o boom do shale oil nos EUA e excesso de oferta, o valor recuou de ~110 USD para ~30 USD entre 2014 e 2016.
 - **Colapso de 2020:** devido à pandemia de COVID-19, a demanda despencou, levando o preço a menos de 20 USD em abril de 2020.
 - **Alta em 2022:** tensões geopolíticas após a invasão da Ucrânia e retomada econômica elevaram o preço acima de 120 USD em meados de 2022.
