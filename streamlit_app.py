@@ -61,11 +61,11 @@ if uploaded:
 
         # Bloco de Insights
         st.markdown("""
-**Principais fatores de oscilação do preço no histórico temporal:**
-- **Pico de 2008:** em meados de 2008, o preço chegou a ~140 USD/bbl antes da crise financeira, caindo para ~40 USD no início de 2009.
-- **Queda de 2014–2016:** o boom do shale oil nos EUA e o excesso de oferta fizeram o preço recuar de ~110 USD para ~30 USD.
-- **Colapso de 2020:** durante a pandemia de COVID-19, a demanda caiu drasticamente, levando o preço a <20 USD em abril de 2020.
-- **Alta de 2022:** tensões geopolíticas após a invasão da Ucrânia e a recuperação econômica elevaram o preço acima de 120 USD.
+st.subheader(Principais fatores de oscilação do preço no histórico temporal:)
+- **Pico de 2008:** em meados de 2008, o preço chegou a ~140 USD/bbl antes da crise financeira, caindo para ~40 USD no início de 2009.  
+- **Queda de 2014–2016:** o boom do shale oil nos EUA e o excesso de oferta fizeram o preço recuar de ~110 USD para ~30 USD.  
+- **Colapso de 2020:** durante a pandemia de COVID-19, a demanda caiu drasticamente, levando o preço a <20 USD em abril de 2020.  
+- **Alta de 2022:** tensões geopolíticas após a invasão da Ucrânia e a recuperação econômica elevaram o preço acima de 120 USD.  
 """)
 
         # Bloco dos Últimos 30 dias + Previsão
@@ -81,7 +81,20 @@ if uploaded:
             'high': ci.iloc[:, 1].values
         }, index=future_idx)
 
-        st.subheader("Últimos 30 dias + Previsão")
+st.subheader("Últimos 30 dias + Previsão")
+st.markdown("""
+**Sobre o modelo de previsão**  
+O modelo ARIMAX baseia‐se na ideia de que o preço de hoje reflete tanto o que aconteceu nos dias anteriores quanto as variações recentes do mercado. Ele identifica padrões de alta e de baixa — por exemplo, se o preço esteve subindo de forma constante ou sofreu quedas pontuais — e utiliza essas informações para projetar o que deve acontecer nos próximos dias.
+
+- **Por que ARIMAX?**  
+  - É um modelo simples e consolidado, amplamente usado em finanças e economia.  
+  - Ajusta‐se bem a séries diárias de preços, capturando oscilações normais sem “torrar” extremos.  
+  - Inclui um intervalo de confiança, mostrando a margem de erro esperada.  
+  - Suas previsões são estáveis e fáceis de entender, mesmo para quem não é da área de dados.
+
+Essa combinação de robustez, clareza e capacidade de lidar com séries temporais complexas fez do ARIMAX nossa melhor escolha para prever o preço do petróleo.
+""")
+
         fig2, ax2 = plt.subplots(figsize=(10, 5))
         ax2.plot(df_last30.index, df_last30['preco'], '-o', label="Histórico", color='navy', markersize=4)
         for x, y in zip(df_last30.index, df_last30['preco']):
