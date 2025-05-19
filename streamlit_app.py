@@ -25,10 +25,12 @@ horizon = st.sidebar.slider("Dias de previsão", 1, 60, 30)
 if uploaded:
     df = load_data(uploaded)
 
-    # Bloco de seleção de intervalo histórico
-    start_date, end_date = st.date_input(
-        "Selecione o intervalo histórico",
-        [df.index.min().date(), df.index.max().date()]
+    # Bloco de Seleção de Intervalo Histórico
+    start_date, end_date = st.sidebar.date_input(
+        "Intervalo Histórico",
+        value=(df.index.min().date(), df.index.max().date()),
+        min_value=df.index.min().date(),
+        max_value=df.index.max().date()
     )
     df_hist = df.loc[start_date:end_date]
 
@@ -43,11 +45,11 @@ if uploaded:
 
     # Bloco de Insights
     st.markdown("""
-**Quatro insights sobre a variação do preço do petróleo Brent:**
-- **Pico de 2008:** em meados de 2008, o preço atingiu quase 140 USD/barrel antes da crise financeira, caindo para cerca de 40 USD no início de 2009.
-- **Queda de 2014–2016:** com o boom do shale oil nos EUA e excesso de oferta, o valor recuou de ~110 USD para ~30 USD entre 2014 e 2016.
-- **Colapso de 2020:** devido à pandemia de COVID-19, a demanda despencou, levando o preço a menos de 20 USD em abril de 2020.
-- **Alta em 2022:** tensões geopolíticas após a invasão da Ucrânia e retomada econômica elevaram o preço acima de 120 USD em meados de 2022.
+**Principais fatores de oscilação do preço no histórico temporal:**
+- **Pico de 2008:** preço atingiu quase 140 USD/barrel antes da crise financeira, caindo para ~40 USD no início de 2009.
+- **Queda de 2014–2016:** boom do shale oil nos EUA e excesso de oferta reduziram o valor de ~110 USD para ~30 USD.
+- **Colapso de 2020:** demanda despencou na pandemia de COVID-19, levando o preço a <20 USD em abril de 2020.
+- **Alta de 2022:** tensões geopolíticas após a invasão da Ucrânia elevaram o preço acima de 120 USD.
 """)
 
     # Bloco dos Últimos 30 dias + Previsão
