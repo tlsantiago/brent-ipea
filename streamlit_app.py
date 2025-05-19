@@ -1,5 +1,3 @@
-# app.py
-
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,9 +31,9 @@ horizon = st.sidebar.slider("Dias de previsão", min_value=1, max_value=365, val
 if uploaded:
     # Carrega e prepara os dados
     df = load_data(uploaded)
+
     # Histórico dos últimos 30 dias
     df_last30 = df.last('30D')
-
     st.subheader("Histórico — últimos 30 dias")
     st.line_chart(df_last30['preco'])
 
@@ -66,6 +64,16 @@ if uploaded:
     ax.fill_between(df_fore.index,
                     df_fore['ic_lower'], df_fore['ic_upper'],
                     color='orange', alpha=0.2)
+
+    # Value labels em cada ponto de previsão
+    for x, y in zip(df_fore.index, df_fore['previsto']):
+        ax.annotate(f"{y:.1f}", 
+                    xy=(x, y), 
+                    xytext=(0, 6), 
+                    textcoords='offset points', 
+                    ha='center', 
+                    va='bottom', 
+                    fontsize=8)
 
     # Configurações do eixo X para datas diárias
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=5))  # marca a cada 5 dias
