@@ -26,22 +26,13 @@ if uploaded:
     df = load_data(uploaded)
 
     # Bloco de Seleção de Datas
-    st.subheader("Intervalo da Série Histórica")
     col1, col2 = st.columns(2)
     with col1:
-        start_date = st.date_input(
-            "Data Inicial",
-            value=df.index.min().date(),
-            min_value=df.index.min().date(),
-            max_value=df.index.max().date()
-        )
+        start_date = st.date_input("Data Inicial", value=df.index.min().date(),
+                                   min_value=df.index.min().date(), max_value=df.index.max().date())
     with col2:
-        end_date = st.date_input(
-            "Data Final",
-            value=df.index.max().date(),
-            min_value=df.index.min().date(),
-            max_value=df.index.max().date()
-        )
+        end_date = st.date_input("Data Final", value=df.index.max().date(),
+                                 min_value=df.index.min().date(), max_value=df.index.max().date())
     if start_date > end_date:
         st.error("Data Inicial não pode ser maior que Data Final.")
     else:
@@ -61,7 +52,7 @@ if uploaded:
 
         # Bloco de Insights
         st.markdown("""
-st.subheader(Principais fatores de oscilação do preço no histórico temporal:)
+st.subheader("Principais fatores de oscilação dos preços no período avaliado:")
 - **Pico de 2008:** em meados de 2008, o preço chegou a ~140 USD/bbl antes da crise financeira, caindo para ~40 USD no início de 2009.  
 - **Queda de 2014–2016:** o boom do shale oil nos EUA e o excesso de oferta fizeram o preço recuar de ~110 USD para ~30 USD.  
 - **Colapso de 2020:** durante a pandemia de COVID-19, a demanda caiu drasticamente, levando o preço a <20 USD em abril de 2020.  
@@ -74,15 +65,16 @@ st.subheader(Principais fatores de oscilação do preço no histórico temporal:
         forecast = sarimax_res.get_forecast(steps=horizon)
         pred = forecast.predicted_mean
         ci = forecast.conf_int()
-        future_idx = pd.date_range(df.index.max() + pd.Timedelta(days=1), periods=horizon, freq='D')
+        future_idx = pd.date_range(df.index.max() + pd.Timedelta(days=1),
+                                   periods=horizon, freq='D')
         df_fc = pd.DataFrame({
             'prev': pred.values,
             'low': ci.iloc[:, 0].values,
             'high': ci.iloc[:, 1].values
         }, index=future_idx)
 
-st.subheader("Últimos 30 dias + Previsão")
-st.markdown("""
+        st.subheader("Últimos 30 dias + Previsão")
+        st.markdown("""
 **Sobre o modelo de previsão**  
 O modelo ARIMAX baseia‐se na ideia de que o preço de hoje reflete tanto o que aconteceu nos dias anteriores quanto as variações recentes do mercado. Ele identifica padrões de alta e de baixa — por exemplo, se o preço esteve subindo de forma constante ou sofreu quedas pontuais — e utiliza essas informações para projetar o que deve acontecer nos próximos dias.
 
