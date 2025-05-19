@@ -51,8 +51,8 @@ if uploaded:
         st.pyplot(fig1)
 
         # Bloco de Insights
+        st.subheader("Principais fatores de oscilação dos preços no período avaliado:")
         st.markdown("""
-st.subheader("Principais fatores de oscilação dos preços no período avaliado:")
 - **Pico de 2008:** em meados de 2008, o preço chegou a ~140 USD/bbl antes da crise financeira, caindo para ~40 USD no início de 2009.  
 - **Queda de 2014–2016:** o boom do shale oil nos EUA e o excesso de oferta fizeram o preço recuar de ~110 USD para ~30 USD.  
 - **Colapso de 2020:** durante a pandemia de COVID-19, a demanda caiu drasticamente, levando o preço a <20 USD em abril de 2020.  
