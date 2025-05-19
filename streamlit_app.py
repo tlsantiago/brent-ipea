@@ -17,49 +17,70 @@ def fit_sarimax(series, order=(1, 1, 1)):
     model = SARIMAX(series, order=order)
     return model.fit(disp=False)
 
-st.title("📈 Preço do Petróleo Brent — Curto Prazo")
-st.markdown("Últimos 30 dias de histórico e previsão para os próximos dias via SARIMAX.")
+st.title("📈 Preço do Petróleo Brent — Histórico e Previsão")
 
 uploaded = st.sidebar.file_uploader("CSV de preços Brent", type=["csv"])
-horizon = st.sidebar.slider("Dias de previsão", 1, 365, 30)
+horizon = st.sidebar.slider("Dias de previsão", 1, 60, 30)
 
 if uploaded:
     df = load_data(uploaded)
+
+    # Série histórica completa
+    st.subheader("Série Histórica Completa")
+    fig1, ax1 = plt.subplots(figsize=(10, 4))
+    ax1.plot(df.index, df['preco'], color='navy')
+    ax1.set_xlabel("Data")
+    ax1.set_ylabel("Preço (USD)")
+    ax1.grid(True)
+    st.pyplot(fig1)
+
+    # Últimos 30 dias + previsão
     df_last30 = df.last('30D')
-    st.subheader("Histórico — últimos 30 dias")
-    st.line_chart(df_last30['preco'])
-
-    sarimax_res = fit_sarimax(df['preco'])
-    forecast = sarimax_res.get_forecast(steps=horizon)
-    y_pred = forecast.predicted_mean
+    model = fit_sarimax(df['preco'])
+    forecast = model.get_forecast(steps=horizon)
+    pred = forecast.predicted_mean
     ci = forecast.conf_int()
-    future_idx = pd.date_range(df.index.max() + pd.Timedelta(days=1), periods=horizon)
+    future_idx = pd.date_range(df.index.max() + pd.Timedelta(days=1), periods=horizon, freq='D')
 
-    df_fore = pd.DataFrame({
-        'previsto': y_pred.values,
-        'ic_lower': ci.iloc[:, 0].values,
-        'ic_upper': ci.iloc[:, 1].values
+    df_fc = pd.DataFrame({
+        'prev': pred.values,
+        'low': ci.iloc[:, 0].values,
+        'high': ci.iloc[:, 1].values
     }, index=future_idx)
 
-    st.subheader(f"Previsão — próximos {horizon} dias")
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(df_last30.index, df_last30['preco'], label="Histórico", color='navy')
-    ax.plot(df_fore.index, df_fore['previsto'], '--', label="Previsão", color='orange')
-    ax.fill_between(df_fore.index, df_fore['ic_lower'], df_fore['ic_upper'], color='orange', alpha=0.2)
+    # gráfico
+    st.subheader("Últimos 30 dias + Previsão")
+    fig2, ax2 = plt.subplots(figsize=(10, 5))
+    ax2.plot(df_last30.index, df_last30['preco'], '-o', label="Histórico", color='navy')
+    for x, y in zip(df_last30.index, df_last30['preco']):
+        ax2.annotate(f"{y:.1f}", (x, y), xytext=(0, 4),
+                     textcoords='offset points', ha='center', va='bottom', fontsize=8)
 
-    for x, y in zip(df_fore.index, df_fore['previsto']):
-        ax.annotate(f"{y:.1f}", xy=(x, y), xytext=(0, 6),
-                    textcoords='offset points', ha='center', va='bottom', fontsize=8)
+    ax2.plot(df_fc.index, df_fc['prev'], '--', label="Previsão", color='orange')
+    mid = len(df_fc) // 2
+    xm, ym = df_fc.index[mid], df_fc['prev'].iloc[mid]
+    ax2.annotate(f"{ym:.1f}", (xm, ym), xytext=(0, 4),
+                 textcoords='offset points', ha='center', va='bottom', fontsize=8)
 
-    ax.xaxis.set_major_locator(mdates.DayLocator(interval=5))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%m'))
+    ax2.fill_between(df_fc.index, df_fc['low'], df_fc['high'], color='orange', alpha=0.2)
+    ax2.xaxis.set_major_locator(mdates.DayLocator(interval=5))
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%d-%m'))
     plt.xticks(rotation=45)
+    ax2.set_xlabel("Data")
+    ax2.set_ylabel("Preço (USD)")
+    ax2.legend()
+    ax2.grid(True)
+    st.pyplot(fig2)
 
-    ax.set_title("Histórico (30 dias) + Previsão SARIMAX")
-    ax.set_xlabel("Data")
-    ax.set_ylabel("Preço (USD)")
-    ax.legend()
-    ax.grid(True)
-    st.pyplot(fig)
+    # tabela de previsão
+    df_fc['margem_erro_pct'] = (df_fc['high'] - df_fc['low']) / 2 / df_fc['prev'] * 100
+    df_table = (
+        df_fc
+        .reset_index()
+        .rename(columns={'index': 'Data', 'prev': 'Previsão', 'margem_erro_pct': 'Margem de Erro (%)'})
+    )
+    st.subheader("Previsão em Tabela")
+    st.table(df_table[['Data', 'Previsão', 'Margem de Erro (%)']])
+
 else:
-    st.info("Faça o upload do CSV de preços Brent para iniciar.")
+    st.info("Faça upload do CSV para iniciar.")
