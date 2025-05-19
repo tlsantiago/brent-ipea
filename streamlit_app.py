@@ -83,6 +83,7 @@ O modelo ARIMAX baseia‐se na ideia de que o preço de hoje reflete tanto o que
   - Ajusta‐se bem a séries diárias de preços, capturando oscilações normais sem “torrar” extremos.  
   - Inclui um intervalo de confiança, mostrando a margem de erro esperada.  
   - Suas previsões são estáveis e fáceis de entender, mesmo para quem não é da área de dados.
+  - Dos modelos avaliado, foi o modelo que demonstrou a menor taxa de erro médio na previsão.
 
 Essa combinação de robustez, clareza e capacidade de lidar com séries temporais complexas fez do ARIMAX nossa melhor escolha para prever o preço do petróleo.
 """)
